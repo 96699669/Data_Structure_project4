@@ -1,0 +1,134 @@
+#include <stdio.h>
+
+/*
+vertex 顶点 source 源点
+path length 路径长度
+pioneer 前驱
+adjacent matrix 邻接矩阵
+*/
+#define MaxSize 5
+
+#define Infinity 1000
+
+void Dijkstra(int vertex, int source, int PathLength[], int AdjacentMatrix[MaxSize][MaxSize],int pioneer[MaxSize])
+{
+    //标记顶点是否在集合S中，如果是，则值为1，否为0
+    bool sign[vertex];
+   
+    for(int i=0; i<vertex; i++)
+    {
+        //初始化源点到其他各个顶点的最短路径长度
+        PathLength[i]=AdjacentMatrix[source][i];
+       
+        sign[i]=false;
+       
+        //满足条件，说明顶点i与源点不相邻
+        if(PathLength[i]==Infinity)
+        {
+            pioneer[i]=-1;
+           
+        }
+        else
+        {
+            pioneer[i]=source;
+        }
+       
+    }
+   
+    //初始化时，集合S中只有一个元素，源点
+    PathLength[source]=0;
+    sign[source]=true;
+   
+    for(int i=0; i<vertex; i++)
+    {
+        int temp=Infinity;
+       
+        int t=source;
+       
+       
+           
+       
+        for(int j=0; j<vertex; j++)
+        {
+            if((!sign[j]) && (PathLength[j]<temp))
+            {
+                t=j;
+                temp=PathLength[j];
+            }
+        }
+       
+        if(t==source) break;
+       
+        sign[t]=true;
+    
+       
+        for(int j=0; j<vertex; j++)
+        {
+            if((!sign[j]) && (AdjacentMatrix[t][j]!=Infinity))
+            {
+                if(PathLength[j]>(PathLength[t]+AdjacentMatrix[t][j]))
+                {
+                   
+                    PathLength[j]=PathLength[t]+AdjacentMatrix[t][j];
+                    pioneer[j]=t;
+                }
+            }
+        }
+   
+    }
+   
+   
+}
+
+void find(int pineer[MaxSize], int i, int AdjacentMatrix[MaxSize][MaxSize])
+{
+    while(pineer[i]!=-1)
+    {
+        //反向的
+        printf("(%d, %d)%d ", pineer[i], i, AdjacentMatrix[pineer[i]][i]);
+        i=pineer[i];
+    }
+}
+
+int main(void)
+{
+    int AdjacentMatrix[MaxSize][MaxSize]={Infinity,8,32,Infinity,Infinity,
+                            12,Infinity,16,15,Infinity,
+                            Infinity,29,Infinity,Infinity,13,
+                            Infinity,21,Infinity,Infinity,7,
+                            Infinity,Infinity,27,19,Infinity
+                            };
+    int vertex=MaxSize;
+   
+    int source=3;
+    
+    int end=3; 
+   
+    int PathLength[MaxSize];
+   
+    int pioneer[MaxSize];//记录前顶点
+   
+    for(int i=0; i<MaxSize; i++)
+    {
+        //初始化前顶点为无穷大
+        pioneer[i]=Infinity;
+    }
+   
+    printf("请输入源点(0~4)：");
+   
+    scanf("%d", &source);
+    
+    printf("请输入源点(0~4)：");
+   
+    scanf("%d", &end);
+    
+    printf("\n最短路径和长度\n");
+   
+    Dijkstra(vertex, source, PathLength, AdjacentMatrix, pioneer);
+   
+    printf("\n源点%d到顶点%d : %d ", source, end, PathLength[end]);
+    
+    find(pioneer, end, AdjacentMatrix);
+   
+    return 0;
+}
